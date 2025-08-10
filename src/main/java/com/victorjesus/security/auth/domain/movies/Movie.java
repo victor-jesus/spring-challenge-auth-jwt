@@ -1,6 +1,6 @@
 package com.victorjesus.security.auth.domain.movies;
 
-import com.victorjesus.security.auth.dto.MoviePostRequest;
+import com.victorjesus.security.auth.dto.movies.MoviePostRequest;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

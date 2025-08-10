@@ -1,7 +1,7 @@
 package com.victorjesus.security.auth.controller;
 
 import com.victorjesus.security.auth.domain.movies.Movie;
-import com.victorjesus.security.auth.dto.MoviePostRequest;
+import com.victorjesus.security.auth.dto.movies.MoviePostRequest;
 import com.victorjesus.security.auth.repository.MovieRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;

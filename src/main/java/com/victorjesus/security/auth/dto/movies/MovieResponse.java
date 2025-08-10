@@ -1,4 +1,4 @@
-package com.victorjesus.security.auth.dto;
+package com.victorjesus.security.auth.dto.movies;
 
 import com.victorjesus.security.auth.domain.movies.Genre;
 
