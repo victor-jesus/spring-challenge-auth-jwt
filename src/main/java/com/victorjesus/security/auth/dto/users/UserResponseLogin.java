@@ -1,6 +1,6 @@
 package com.victorjesus.security.auth.dto.users;
 
-public record UserResponseCreate(
+public record UserResponseLogin(
         String token
 ) {
 }

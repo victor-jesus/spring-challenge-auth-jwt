@@ -1,15 +1,13 @@
 package com.victorjesus.security.auth.controller;
 
-import com.victorjesus.security.auth.config.SecurityConfiguration;
 import com.victorjesus.security.auth.domain.users.User;
 import com.victorjesus.security.auth.dto.users.UserRequestLogin;
 import com.victorjesus.security.auth.dto.users.UserRequestCreate;
-import com.victorjesus.security.auth.dto.users.UserResponseCreate;
+import com.victorjesus.security.auth.dto.users.UserResponseLogin;
 import com.victorjesus.security.auth.repository.UserRepository;
 import com.victorjesus.security.auth.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -38,7 +36,8 @@ public class AuthenticationController {
     @PostMapping("/login")
     @Operation(summary = "Login with users data", description = "Login method")
     @ApiResponse(responseCode = "200", description = "User logged")
-    @SecurityRequirement(name = SecurityConfiguration.SECURITY)
+    @ApiResponse(responseCode = "400", description = "All fields must be filled.")
+    @ApiResponse(responseCode = "500", description = "An unexpected error occurred.")
     public ResponseEntity<?> login(@RequestBody @Valid UserRequestLogin request){
         var usernamePassword = new UsernamePasswordAuthenticationToken(request.login(), request.password());
 
@@ -46,20 +45,20 @@ public class AuthenticationController {
 
         var token = tokenService.generateToken((User) auth.getPrincipal());
 
-        return ResponseEntity.ok(new UserResponseCreate(token));
+        return ResponseEntity.ok(new UserResponseLogin(token));
     }
 
     @PostMapping("/create")
     @Transactional
     @Operation(summary = "Create user with param data", description = "Create user")
     @ApiResponse(responseCode = "200", description = "User created")
-    @ApiResponse(responseCode = "403")
-    public ResponseEntity<UserResponseCreate> createUser(@RequestBody @Valid UserRequestCreate request){
+    @ApiResponse(responseCode = "400", description = "All fields must be filled.")
+    @ApiResponse(responseCode = "500", description = "An unexpected error occurred.")
+    public ResponseEntity<UserResponseLogin> createUser(@RequestBody @Valid UserRequestCreate request){
         if(userRepository.findByLogin(request.login()) != null) return ResponseEntity.badRequest().build();
 
         String passwordEncrypted = new BCryptPasswordEncoder().encode(request.password());
         User newUser = new User(request.login(), passwordEncrypted, request.role());
-
 
         userRepository.save(newUser);
 
