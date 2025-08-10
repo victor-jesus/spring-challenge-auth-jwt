@@ -2,6 +2,8 @@ package com.victorjesus.security.auth.domain.exception.handler;
 
 import com.victorjesus.security.auth.domain.exception.ExceptionResponse;
 import com.victorjesus.security.auth.domain.exception.MovieNotFoundException;
+import com.victorjesus.security.auth.domain.exception.UserNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,8 +15,22 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> throwsEntityNotFoundException(){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ExceptionResponse(HttpStatus.NOT_FOUND.value(), "Error: ", "User not found."));
+    }
+
     @ExceptionHandler(MovieNotFoundException.class)
     public ResponseEntity<ExceptionResponse> throwsMovieNotFoundException(MovieNotFoundException exception){
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ExceptionResponse(HttpStatus.BAD_REQUEST.value(), "Error: ", exception.getMessage()));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> throwsMovieNotFoundException(UserNotFoundException exception){
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ExceptionResponse(HttpStatus.BAD_REQUEST.value(), "Error: ", exception.getMessage()));
