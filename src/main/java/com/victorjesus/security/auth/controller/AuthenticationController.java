@@ -1,17 +1,14 @@
 package com.victorjesus.security.auth.controller;
 
-import com.victorjesus.security.auth.config.SecurityConfiguration;
-import com.victorjesus.security.auth.domain.exception.UserNotFoundException;
 import com.victorjesus.security.auth.domain.users.User;
-import com.victorjesus.security.auth.dto.users.UserRequestLogin;
 import com.victorjesus.security.auth.dto.users.UserRequestCreate;
+import com.victorjesus.security.auth.dto.users.UserRequestLogin;
 import com.victorjesus.security.auth.dto.users.UserResponseDTO;
 import com.victorjesus.security.auth.dto.users.UserResponseLogin;
 import com.victorjesus.security.auth.repository.UserRepository;
 import com.victorjesus.security.auth.service.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -20,14 +17,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.Optional;
 
 @RestController
 @RequestMapping("auth")
-@Tag(name = "user", description = "Controller to save and login with users data")
+@Tag(name = "auth", description = "Controller to save and login with users data")
 public class AuthenticationController {
 
     @Autowired
@@ -73,36 +71,6 @@ public class AuthenticationController {
                 .toUri();
 
         return ResponseEntity.created(uri).body(new UserResponseDTO(newUser));
-    }
-
-    @DeleteMapping("/users/{id}")
-    @Transactional
-    @Operation(summary = "Delete user from id", description = "Delete user")
-    @ApiResponse(responseCode = "204", description = "User deleted with success!")
-    @ApiResponse(responseCode = "400", description = "All fields must be filled.")
-    @ApiResponse(responseCode = "404", description = "User not found!")
-    @ApiResponse(responseCode = "500", description = "An unexpected error occurred!")
-    @SecurityRequirement(name = SecurityConfiguration.SECURITY)
-    public ResponseEntity<?> deleteUserById(@PathVariable String id){
-        var userOptional = Optional.of(userRepository.getReferenceById(id)).orElseThrow(() -> new UserNotFoundException("Not possible to find user."));
-
-        userRepository.deleteById(userOptional.getId());
-
-        return ResponseEntity.noContent().build();
-    }
-    @GetMapping("/users/{id}")
-    @Operation(summary = "Get user by id", description = "Get user passing Id")
-    @ApiResponse(responseCode = "200", description = "Find user with success!")
-    @ApiResponse(responseCode = "400", description = "All fields must be filled.")
-    @ApiResponse(responseCode = "404", description = "User not found!")
-    @ApiResponse(responseCode = "500", description = "An unexpected error occurred.")
-    @SecurityRequirement(name = SecurityConfiguration.SECURITY)
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable String id){
-        Optional<User> userOptional = Optional.of(userRepository.getReferenceById(id));
-
-        return userOptional
-                .map(u -> ResponseEntity.ok(new UserResponseDTO(u)))
-                .orElseThrow(() -> new UserNotFoundException("Not possible to find user."));
     }
 
 

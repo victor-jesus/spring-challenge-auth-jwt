@@ -32,8 +32,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ExceptionResponse> throwsMovieNotFoundException(UserNotFoundException exception){
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(new ExceptionResponse(HttpStatus.BAD_REQUEST.value(), "Error: ", exception.getMessage()));
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ExceptionResponse(HttpStatus.NOT_FOUND.value(), "Error: ", exception.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
