@@ -75,7 +75,7 @@ public class AuthenticationController {
         return ResponseEntity.created(uri).body(new UserResponseDTO(newUser));
     }
 
-    @DeleteMapping("/users/delete/{id}")
+    @DeleteMapping("/users/{id}")
     @Transactional
     @Operation(summary = "Delete user from id", description = "Delete user")
     @ApiResponse(responseCode = "204", description = "User deleted with success!")
