@@ -41,6 +41,7 @@ public class AuthenticationController {
     @Operation(summary = "Login with users data", description = "Login method")
     @ApiResponse(responseCode = "200", description = "User logged")
     @ApiResponse(responseCode = "400", description = "All fields must be filled.")
+    @ApiResponse(responseCode = "404", description = "User not found!")
     @ApiResponse(responseCode = "500", description = "An unexpected error occurred.")
     public ResponseEntity<?> login(@RequestBody @Valid UserRequestLogin request){
         var usernamePassword = new UsernamePasswordAuthenticationToken(request.login(), request.password());
@@ -74,10 +75,26 @@ public class AuthenticationController {
         return ResponseEntity.created(uri).body(new UserResponseDTO(newUser));
     }
 
+    @DeleteMapping("/users/delete/{id}")
+    @Transactional
+    @Operation(summary = "Delete user from id", description = "Delete user")
+    @ApiResponse(responseCode = "204", description = "User deleted with success!")
+    @ApiResponse(responseCode = "400", description = "All fields must be filled.")
+    @ApiResponse(responseCode = "404", description = "User not found!")
+    @ApiResponse(responseCode = "500", description = "An unexpected error occurred!")
+    @SecurityRequirement(name = SecurityConfiguration.SECURITY)
+    public ResponseEntity<?> deleteUserById(@PathVariable String id){
+        var userOptional = Optional.of(userRepository.getReferenceById(id)).orElseThrow(() -> new UserNotFoundException("Not possible to find user."));
+
+        userRepository.deleteById(userOptional.getId());
+
+        return ResponseEntity.noContent().build();
+    }
     @GetMapping("/users/{id}")
     @Operation(summary = "Get user by id", description = "Get user passing Id")
     @ApiResponse(responseCode = "200", description = "Find user with success!")
-    @ApiResponse(responseCode = "400", description = "User not found!")
+    @ApiResponse(responseCode = "400", description = "All fields must be filled.")
+    @ApiResponse(responseCode = "404", description = "User not found!")
     @ApiResponse(responseCode = "500", description = "An unexpected error occurred.")
     @SecurityRequirement(name = SecurityConfiguration.SECURITY)
     public ResponseEntity<UserResponseDTO> getUserById(@PathVariable String id){

@@ -44,6 +44,8 @@ public class SecurityConfiguration {
                                 "/swagger-resources/**",
                                 "/webjars/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/movies").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/auth/users/delete/").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/auth/users/").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(filterConfiguration, UsernamePasswordAuthenticationFilter.class)
